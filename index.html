@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step Progress Bar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f0f8ff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(135, 206, 250, 0.3);
+        }
+
+        h1 {
+            color: #4682b4;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .progress-container::before {
+            content: '';
+            background-color: #e0e0e0;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            height: 4px;
+            width: 100%;
+            z-index: 1;
+            border-radius: 2px;
+        }
+
+        .progress {
+            background-color: #87ceeb;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            height: 4px;
+            width: 0%;
+            z-index: 2;
+            transition: 0.4s ease;
+            border-radius: 2px;
+        }
+
+        .circle {
+            background-color: white;
+            color: #999;
+            border: 3px solid #e0e0e0;
+            border-radius: 50%;
+            height: 40px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transition: 0.4s ease;
+            font-weight: bold;
+        }
+
+        .circle.active {
+            border-color: #87ceeb;
+            color: #4682b4;
+            background-color: #e6f4ff;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 10px 30px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(70, 130, 180, 0.2);
+        }
+
+        .btn:hover {
+            background-color: #5f9ea0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(70, 130, 180, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 3px rgba(70, 130, 180, 0.2);
+        }
+
+        .btn:disabled {
+            background-color: #d3d3d3;
+            color: #a9a9a9;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .step-text {
+            text-align: center;
+            margin: 25px 0;
+            color: #4682b4;
+            font-size: 18px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Step Progress Bar</h1>
+        
+        <div class="progress-container">
+            <div class="progress" id="progress"></div>
+            <div class="circle active">1</div>
+            <div class="circle">2</div>
+            <div class="circle">3</div>
+            <div class="circle">4</div>
+            <div class="circle">5</div>
+        </div>
+
+        <div class="step-text">Step 1: Account Information</div>
+
+        <div class="buttons">
+            <button class="btn" id="prev" disabled>Previous</button>
+            <button class="btn" id="next">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const progress = document.getElementById('progress');
+        const prev = document.getElementById('prev');
+        const next = document.getElementById('next');
+        const circles = document.querySelectorAll('.circle');
+        const stepText = document.querySelector('.step-text');
+
+        const stepMessages = [
+            "Step 1: Account Information",
+            "Step 2: Personal Details",
+            "Step 3: Preferences",
+            "Step 4: Verification",
+            "Step 5: Complete Setup"
+        ];
+
+        let currentActive = 1;
+
+        next.addEventListener('click', () => {
+            currentActive++;
+            
+            if(currentActive > circles.length) {
+                currentActive = circles.length;
+            }
+            
+            update();
+        });
+
+        prev.addEventListener('click', () => {
+            currentActive--;
+            
+            if(currentActive < 1) {
+                currentActive = 1;
+            }
+            
+            update();
+        });
+
+        function update() {
+            circles.forEach((circle, idx) => {
+                if(idx < currentActive) {
+                    circle.classList.add('active');
+                } else {
+                    circle.classList.remove('active');
+                }
+            });
+            
+            const actives = document.querySelectorAll('.active');
+            
+            progress.style.width = ((actives.length - 1) / (circles.length - 1)) * 100 + '%';
+            
+            stepText.textContent = stepMessages[currentActive - 1];
+            
+            if(currentActive === 1) {
+                prev.disabled = true;
+            } else if(currentActive === circles.length) {
+                next.disabled = true;
+            } else {
+                prev.disabled = false;
+                next.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
